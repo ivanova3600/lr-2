@@ -12,7 +12,7 @@
 weight - веса, b - шум, их инициализируем нулями. Гиперпараметры - скорость обучения и количество итераций.   
 Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь:  
   
-<img src="https://latex.codecogs.com/svg.latex?loss=\fraq{1}{2*n}\sum_{i=1}^n(y_{pred}-y)"/>   
+<img src=https://latex.codecogs.com/svg.image?sd">   
   
 ```
 np.sum(np.square(y_pred-y))/(2*self.m)
