@@ -18,3 +18,7 @@ h = np.dot(X, self.w)+self.b
 dw = np.dot(X.T,(h-y)) / self.m
 db = np.sum(h-y)  / self.m
 '''
+
+
+<img src="https://render.githubusercontent.com/render/math?math=1/(2*n)*\sum_{i=0}^{n} (y_pred-y)^2">
+
