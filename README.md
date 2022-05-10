@@ -5,10 +5,10 @@
 ### Ход работы
 1) Линейная регрессия (с градиентным спуском)  
 Гиперпараметры - lr (скорость обучения) и epoch (количество эпох).  
-Модель: $$ X*w + b = Y $$  
+Модель: <img src="https://render.githubusercontent.com/render/math?math=X*w + b = Y">
 '''
 '''
-weight - веса, b - шум, их инициализируем нулями. Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь $1/(2*n)*\sum_{i=0}^{n} (y_pred-y)^2$:  
+weight - веса, b - шум, их инициализируем нулями. Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь: <img src="https://render.githubusercontent.com/render/math?math=1/(2*n)*\sum_{i=0}^{n} (y_{pred}-y)^2">  
 '''
 np.sum(np.square(y_pred-y))/(2*self.m)
 '''
@@ -18,7 +18,4 @@ h = np.dot(X, self.w)+self.b
 dw = np.dot(X.T,(h-y)) / self.m
 db = np.sum(h-y)  / self.m
 '''
-
-
-<img src="https://render.githubusercontent.com/render/math?math=1/(2*n)*\sum_{i=0}^{n} (y_pred-y)^2">
 
