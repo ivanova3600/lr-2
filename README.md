@@ -7,7 +7,8 @@
 Гиперпараметры - lr (скорость обучения) и epoch (количество эпох).  
 Модель: <img src="https://render.githubusercontent.com/render/math?math=X*w + b = Y">
 
-weight - веса, b - шум, их инициализируем нулями. Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь: <img src="https://render.githubusercontent.com/render/math?math=1/(2*n)*\sum_{i=0}^{n} (y_{pred}-y)^2">  
+weight - веса, b - шум, их инициализируем нулями. Гиперпараметры - скорость обучения и количество итераций.   
+Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь: <img src="https://render.githubusercontent.com/render/math?math=1/(2*n)*\sum_{i=0}^{n} (y_{pred}-y)^2">  
 ```
 np.sum(np.square(y_pred-y))/(2*self.m)
 ```
@@ -111,8 +112,12 @@ RMS:  0.2095602003870707
 ```
 Как я поняла из документации, для регрессии другие указанные метрики (например, confusion matrix) не используются.  
 2) Метод опорных векторов  
-Модель: <img src="https://render.githubusercontent.com/render/math?math=class(x)=sign(\sum_i (\lambda_i*y_i*K(x_i,x)) + b)">
-Задача оптимизации:  
-<img src="https://render.githubusercontent.com/render/math?math=max(\sum_{i=1}^{n} (\lambda_i) - 1/2 \sum_{i=1}^{n}\sum_{j=1}^{n}y_i*y_j*K(x_i,x_j)*\lambda_i*\lambda_j))">  
-<img src="https://render.githubusercontent.com/render/math?math=db=1/2*\sum_{i=0}^{n} y_i*\lambda_i = 0">   
-<img src="https://render.githubusercontent.com/render/math?math=0<=\lambda_i<=C">   
+Модель: <img src="https://render.githubusercontent.com/render/math?math=class(x)=sign(X*w - b)">   
+  
+Нам также необходимо настроить значения w и b. Гиперпараметры - количество итераций, скорость обучения и лямбда.  
+Во время обучения сначала мы строим вектор, определяющий, какой класс у объекта:  
+```
+y_ = np.where(y <= 0, -1, 1)
+```
+w и b - нулевые. Далее проходим по всем эпохам, вычисляя condition. Потом проверяем, если condition больше 0, то тогда классы  
+3) Метод ближайших соседей  
