@@ -1,6 +1,6 @@
 # Лабораторная работа №1
 
-<img src="https://latex.codecogs.com/svg.latex?;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}"/>
+<img src="https://latex.codecogs.com/svg.latex?x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}"/>
 
 
 ### Введение
@@ -10,14 +10,14 @@
 Гиперпараметры - lr (скорость обучения) и epoch (количество эпох).  
 Модель: <math>Y = X*w + b</math>  
 weight - веса, b - шум, их инициализируем нулями. Гиперпараметры - скорость обучения и количество итераций.   
-Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь:
-<img src="https://render.githubusercontent.com/render/math?math=loss=\fraq{1}{2*n}\sum_{i=1}^n(y_{pred}-y)">  
+Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь:  
+<img src="https://latex.codecogs.com/svg.latex?loss=\fraq{1}{2*n}\sum_{i=1}^n(y_{pred}-y)"/>   
 ```
 np.sum(np.square(y_pred-y))/(2*self.m)
 ```
 self.m - длина входного массива, y - выходные точные данные, y_pred - предсказанные выходные данные. Далее находим градиенты:  
-<img src="https://render.githubusercontent.com/render/math?math=dw=X^T*(y_{y_pred}-y)/n">  
-<img src="https://render.githubusercontent.com/render/math?math=db=1/2*\sum_{i=0}^{n} (y_{pred}-y)">  
+<img src="https://latex.codecogs.com/svg.latex?dw=X^T*(y_{y_pred}-y)/n"/>  
+<img src="https://latex.codecogs.com/svg.latex?db=1/2*\sum_{i=0}^{n} (y_{pred}-y)"/>  
 ```
 h = np.dot(X, self.w)+self.b
 dw = np.dot(X.T,(h-y)) / self.m
