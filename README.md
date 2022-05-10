@@ -12,8 +12,8 @@ weight - веса, b - шум, их инициализируем нулями. �
 np.sum(np.square(y_pred-y))/(2*self.m)
 ```
 self.m - длина входного массива, y - выходные точные данные, y_pred - предсказанные выходные данные. Далее находим градиенты:  
-<img src="https://render.githubusercontent.com/render/math?math=dw = X^T*(y_{y_pred-y)/n">  
-<img src="https://render.githubusercontent.com/render/math?math= db = 1/2*\sum_{i=0}^{n} (y_{pred}-y)">  
+<img src="https://render.githubusercontent.com/render/math?math=dw=X^T*(y_{y_pred-y)/n">  
+<img src="https://render.githubusercontent.com/render/math?math=db=1/2*\sum_{i=0}^{n} (y_{pred}-y)">  
 ```
 h = np.dot(X, self.w)+self.b
 dw = np.dot(X.T,(h-y)) / self.m
