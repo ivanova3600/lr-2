@@ -112,12 +112,59 @@ RMS:  0.2095602003870707
 ```
 Как я поняла из документации, для регрессии другие указанные метрики (например, confusion matrix) не используются.  
 2) Метод опорных векторов  
-Модель: <img src="https://render.githubusercontent.com/render/math?math=class(x)=sign(X*w - b)">   
+Модель: <img src="https://render.githubusercontent.com/render/math?math=class(x)=sign(X*w)">   
   
-Нам также необходимо настроить значения w и b. Гиперпараметры - количество итераций, скорость обучения и лямбда.  
+Нам также необходимо настроить значения w и b. Гиперпараметры - количество итераций и скорость обучения.  
 Во время обучения сначала мы строим вектор, определяющий, какой класс у объекта:  
 ```
-y_ = np.where(y <= 0, -1, 1)
+y_ = np.where(y > 0, 1, -1)
 ```
-w и b - нулевые. Далее проходим по всем эпохам, вычисляя condition. Потом проверяем, если condition больше 0, то тогда классы  
+Инициализируем w - нулевой. Далее проходим по всем эпохам, вычисляя condition. Вычисляем значение функции потерь, затем, если ее значение меньше 1, то:  
+<img src="https://render.githubusercontent.com/render/math?math=w=w+lr*(x[i]*y[i]-2/epoch*w)">     
+иначе:  
+<img src="https://render.githubusercontent.com/render/math?math=w=w+lr*(-2)/epoch*w">   
+```
+a = y_[i] * (np.dot(x, self.w))
+if a < 1:
+    self.w += self.lr * (X[i]*y_[i] - 2/self.epoch*self.w)
+else:
+    self.w += self.lr * (-2/self.epoch*self.w)
+```
+
+Предсказание: применяем к входному массиву модель и далее, если ее значение больше 0, то заменяем на 1, иначе - на 0: 
+```
+def predict(self, X):
+    y_pred = np.dot(X, self.w)
+    return np.where(y_pred > 0, 1, 0)
+```
+Весь класс SWMM:
+```
+class SVMM(BaseEstimator, ClassifierMixin):
+    def __init__(self, lr=1, epoch=1000):
+        self.lr = lr        
+        self.epoch = epoch
+
+    def fit(self, X, y):
+        n_samples, n_features = X.shape
+        
+        y_ = np.where(y > 0, 1, -1)
+        
+        self.w = np.zeros(n_features)
+
+        for e in range(self.epoch):
+            for i, x in enumerate(X):
+                a = y_[i] * (np.dot(x, self.w))
+                if a < 1:
+                    self.w += self.lr * (X[i]*y_[i] - 2/self.epoch*self.w)
+                else:
+                    self.w += self.lr * (-2/self.epoch*self.w)
+
+
+    def predict(self, X):
+        y_pred = np.dot(X, self.w)
+        return np.where(y_pred > 0, 1, 0)
+    
+    def transform(self, X):
+        return X
+```
 3) Метод ближайших соседей  
