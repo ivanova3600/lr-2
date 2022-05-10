@@ -12,7 +12,7 @@
 weight - веса, b - шум, их инициализируем нулями. Гиперпараметры - скорость обучения и количество итераций.   
 Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь:  
   
-<img src="https://latex.codecogs.com/svg.image?sd">   
+<img src="https://latex.codecogs.com/svg.image?\frac{1}{2*n}&space;\sum_{i=1}^{n}&space;(y_{pred}-y)^2">   
   
 ```
 np.sum(np.square(y_pred-y))/(2*self.m)
@@ -76,7 +76,7 @@ class LinearRegression_(BaseEstimator, ClassifierMixin):
     def transform(self, X):
         return X
 ```
-В качестве оцениваемых параметров выбраны epoch = 1, 2, 5, 7, 10; lr - 0.001, 0.01, 0.1, 0.5, 1. Наиболее высокая точность достигнута при lr = 0.001 и epoch = 1:
+В качестве оцениваемых параметров выбраны epoch = 1, 2, 5, 7, 10; lr - 0.001, 0.01, 0.1, 0.5, 1. Наиболее высокая точность достигнута при lr = 0.001 и epoch = 1. Использован параметр scoring = 'neg_mean_squared_error', так как у нас задача регрессии:
 ```
 pipe = Pipeline(steps=[('lin', LinearRegression_())])
 pipe.get_params().keys()
@@ -117,7 +117,7 @@ RMS:  0.2095602003870707
 ```
 Как я поняла из документации, для регрессии другие указанные метрики (например, confusion matrix) не используются.  
 2) Метод опорных векторов  
-Модель: <img src="https://render.githubusercontent.com/render/math?math=class(x)=sign(X*w)">   
+Модель: <img src="https://latex.codecogs.com/svg.image?class(x)=sign(X*w)">   
   
 Нам также необходимо настроить значения w и b. Гиперпараметры - количество итераций и скорость обучения.  
 Во время обучения сначала мы строим вектор, определяющий, какой класс у объекта:  
@@ -125,9 +125,9 @@ RMS:  0.2095602003870707
 y_ = np.where(y > 0, 1, -1)
 ```
 Инициализируем w - нулевой. Далее проходим по всем эпохам, вычисляя condition. Вычисляем значение функции потерь, затем, если ее значение меньше 1, то:  
-<img src="https://render.githubusercontent.com/render/math?math=w=lr*(x[i]*y[i]-2/epoch*w) + w">     
+<img src="https://latex.codecogs.com/svg.image?w=lr*(x[i]*y[i]-2/epoch*w)&space;&plus;&space;w">     
 иначе:  
-<img src="https://render.githubusercontent.com/render/math?math=w=w+lr*(-2)/epoch*w">   
+<img src="https://latex.codecogs.com/svg.image?w=w&plus;lr*(-2)/epoch*w">   
 ```
 a = y_[i] * (np.dot(x, self.w))
 if a < 1:
@@ -172,7 +172,124 @@ class SVMM(BaseEstimator, ClassifierMixin):
     def transform(self, X):
         return X
 ```
+В качестве оцениваемых параметров возьмем lr = 0.001, 0.1, 0.5, 1; epoch = 20, 50, 100, 1000, 5000. Наиболее высокая точность достигнута при epoch = 20 и lr = 0.5:  
+```
+{'svm__epoch': 20, 'svm__lr': 0.5}
+0.7704753121853445
+```
+Оценка модели: 
+```
+MSE:  0.05005005005005005
+MAE:  0.05005005005005005
+RMS:  0.22371868507134143
+  
+Confusion matrix 
+[[949   0]
+ [ 50   0]]
+
+
+Recall score 0.0
+
+
+roc_auc score 0.5
+
+
+Accuracy score 0.94994994994995  
+```
+Оценка sklearn.svm.SVC:  
+```
+MSE:  0.05005005005005005
+MAE:  0.05005005005005005
+RMS:  0.22371868507134143  
+  
+Confusion matrix [[949   0]
+ [ 50   0]]
+
+
+Recall score 0.0
+
+
+roc_auc score 0.5
+
+
+Accuracy score 0.94994994994995
+```
+Таким образом, построенная модель и sklearn.svm.SVC имеют одинаковую точность.  
 3) Метод ближайших соседей  
 Здесь мы берем k ближайших к рассматриваемому объекту соседей (их значения уже известны) и смотрим, какой из них наиболее часто встречается, и присваиваем этому объекту данный класс.  
 Поэтому в обучении в данном методе просто запоминаются тренировочные входная и выходная выборки. Гиперпараметры - число соседей и функция, с помощью которой будем измерять расстояние. У меня их 2: евклидово и абсолютное расстояние.  
+<img src="https://latex.codecogs.com/svg.image?euclideandistance=\sqrt{\sum_{i=1}^{n}&space;(v_1&space;-&space;v_2)^2}">     
+<img src="https://latex.codecogs.com/svg.image?absolutedistance=\sum_{i=1}^{n}&space;|v_1&space;-&space;v_2|">     
+```
+def euclidean_distance(v1, v2):
+    return np.sqrt(np.sum((v1-v2)**2))
 
+def absolute_distance(v1, v2):
+    return np.sum(np.absolute(v1-v2))
+```
+Предсказание: проходим по каждому элементу во входной выборке (X), и вычисляем расстояние до каждой точки:
+```
+distances = self.distance_func(np.array(self.X[j,:]) , item) 
+```
+Далее создаем массив длины k - число ближайших соседей и сортируем его в порядке возрастания. Потом находим наиболее частое значение в массиве. Если их несколько, то берем первое.  
+'''
+dist = np.argsort(point_dist)[:self.k] 
+labels = self.y[dist]
+
+lab = mode(labels) 
+lab = lab.mode[0]
+'''
+Полностью метод predict:  
+```
+def predict(self, x):
+    op_labels = []
+    
+    for item in x: 
+        point_dist = []
+        for j in range(len(self.X)): 
+            distances = self.distance_func(np.array(self.X[j,:]) , item) 
+            point_dist.append(distances) 
+            
+        point_dist = np.array(point_dist) 
+        dist = np.argsort(point_dist)[:self.k] 
+        labels = self.y[dist]
+
+        lab = mode(labels) 
+        lab = lab.mode[0]
+        op_labels.append(lab)
+
+    return op_labels
+```
+Полностью весь класс KNN:  
+```
+class KNN(BaseEstimator, ClassifierMixin):
+    def __init__(self, k = 4, distance_func = euclidean_distance):
+        self.k = k
+        self.distance_func = distance_func
+        
+    def fit(self, X, y):
+        self.X = X
+        self.y = y
+        
+    def predict(self, x):
+        op_labels = []
+    
+        for item in x: 
+            point_dist = []
+            for j in range(len(self.X)): 
+                distances = self.distance_func(np.array(self.X[j,:]) , item) 
+                point_dist.append(distances) 
+            
+            point_dist = np.array(point_dist) 
+            dist = np.argsort(point_dist)[:self.k] 
+            labels = self.y[dist]
+
+            lab = mode(labels) 
+            lab = lab.mode[0]
+            op_labels.append(lab)
+
+        return op_labels
+    
+    def transform(self, X):
+        return X
+```
