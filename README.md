@@ -230,13 +230,13 @@ def absolute_distance(v1, v2):
 distances = self.distance_func(np.array(self.X[j,:]) , item) 
 ```
 Далее создаем массив длины k - число ближайших соседей и сортируем его в порядке возрастания. Потом находим наиболее частое значение в массиве. Если их несколько, то берем первое.  
-'''
+```
 dist = np.argsort(point_dist)[:self.k] 
 labels = self.y[dist]
 
 lab = mode(labels) 
 lab = lab.mode[0]
-'''
+```
 Полностью весь класс KNN:  
 ```
 class KNN(BaseEstimator, ClassifierMixin):
