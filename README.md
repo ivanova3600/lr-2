@@ -8,6 +8,7 @@
 Модель: <math>Y = X*w + b</math>  
 weight - веса, b - шум, их инициализируем нулями. Гиперпараметры - скорость обучения и количество итераций.   
 Во время обучения мы подбираем такие w и b, чтобы модель давала правильные ответы: сначала мы вычисляем y_pred по формуле выше. Далее мы вычисляем функцию потерь:
+<img src="https://render.githubusercontent.com/render/math?math=loss=\fraq{1}{2*n}\sum_{i=1}^n(y_{pred}-y)">  
 ```
 np.sum(np.square(y_pred-y))/(2*self.m)
 ```
@@ -119,7 +120,7 @@ RMS:  0.2095602003870707
 y_ = np.where(y > 0, 1, -1)
 ```
 Инициализируем w - нулевой. Далее проходим по всем эпохам, вычисляя condition. Вычисляем значение функции потерь, затем, если ее значение меньше 1, то:  
-<img src="https://render.githubusercontent.com/render/math?math=w=w \plus lr*(x[i]*y[i]-2/epoch*w)">     
+<img src="https://render.githubusercontent.com/render/math?math=w=lr*(x[i]*y[i]-2/epoch*w) + w">     
 иначе:  
 <img src="https://render.githubusercontent.com/render/math?math=w=w+lr*(-2)/epoch*w">   
 ```
